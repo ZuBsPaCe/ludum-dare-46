@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://helpers/cursor/cursor-01.png" type="Texture" id=1]
+[ext_resource path="res://helpers/cursor/Cursor.gd" type="Script" id=2]
+
+[node name="Cursor" type="Sprite"]
+z_index = 99
+texture = ExtResource( 1 )
+script = ExtResource( 2 )

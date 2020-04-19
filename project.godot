@@ -8,20 +8,37 @@
 
 config_version=4
 
-_global_script_classes=[  ]
+_global_script_classes=[ {
+"base": "Sprite",
+"class": "Cursor",
+"language": "GDScript",
+"path": "res://helpers/cursor/Cursor.gd"
+}, {
+"base": "RigidBody2D",
+"class": "Orb",
+"language": "GDScript",
+"path": "res://objects/orb/Orb.gd"
+}, {
+"base": "KinematicBody2D",
+"class": "Player",
+"language": "GDScript",
+"path": "res://objects/player/Player.gd"
+} ]
 _global_script_class_icons={
-
+"Cursor": "",
+"Orb": "",
+"Player": ""
 }
 
 [application]
 
 config/name="ld46"
-run/main_scene="res://scenes/Main.tscn"
+run/main_scene="res://scenes/Level1.tscn"
 config/icon="res://icon.png"
 
 [autoload]
 
-Master="*res://helpers/Master.gd"
+Game="*res://helpers/game/Game.tscn"
 
 [display]
 
@@ -30,9 +47,14 @@ window/size/height=720
 window/stretch/mode="2d"
 window/stretch/aspect="keep"
 
+[physics]
+
+2d/default_gravity=0
+
 [rendering]
 
 quality/driver/driver_name="GLES2"
 vram_compression/import_etc=true
 vram_compression/import_etc2=false
+environment/default_clear_color=Color( 0, 0, 0, 1 )
 environment/default_environment="res://default_env.tres"
