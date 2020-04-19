@@ -15,6 +15,7 @@ colors = PoolColorArray( 1, 1, 1, 1, 1, 1, 1, 0.717647, 1, 1, 1, 0 )
 radius = 12.3483
 
 [node name="Player" type="KinematicBody2D"]
+scale = Vector2( 2, 2 )
 script = ExtResource( 2 )
 
 [node name="CPUParticles2D" type="CPUParticles2D" parent="."]

@@ -3,6 +3,10 @@ extends Node2D
 var Spawn = preload("res://helpers/spawn/Spawn.gd")
 var OrbScene = preload("res://objects/orb/Orb.tscn")
 var Orb = preload("res://objects/orb/Orb.gd")
+var SharpieScene = preload("res://objects/sharpie/Sharpie.tscn")
+var Sharpie = preload("res://objects/sharpie/Sharpie.gd")
+var CthulhuScene = preload("res://objects/cthulhu/Cthulhu.tscn")
+var Cthulhu = preload("res://objects/cthulhu/Cthulhu.gd")
 var PlayerScene = preload("res://objects/player/Player.tscn")
 var Player = preload("res://objects/player/Player.gd")
 var CursorScene = preload("res://helpers/cursor/Cursor.tscn")
@@ -17,6 +21,8 @@ var transitioning := false
 var transitioning_to_black := true
 
 var current_level := 1
+var current_level_name := "Level1"
+var level_count := 10
 
 var cursor : Cursor
 var player : Player
@@ -24,6 +30,47 @@ var orb_count : int
 
 onready var black_rect := $GUI/BlackRect
 onready var animation_player := $AnimationPlayer
+
+var orb_init := {
+	"Level1": 3,
+	"Level2": 3,
+	"Level3": 4,
+	"Level4": 4,
+	"Level5": 5,
+	"Level6": 5,
+	"Level7": 6,
+	"Level8": 6,
+	"Level9": 7,
+	"Level10": 7
+}
+
+var sharpie_init := {
+	"Level1": 3,
+	"Level2": 3,
+	"Level3": 4,
+	"Level4": 4,
+	"Level5": 5,
+	"Level6": 5,
+	"Level7": 6,
+	"Level8": 6,
+	"Level9": 7,
+	"Level10": 7
+}
+
+
+var cthulhu_init := {
+	"Level1": 1,
+	"Level2": 1,
+	"Level3": 1,
+	"Level4": 2,
+	"Level5": 2,
+	"Level6": 3,
+	"Level7": 3,
+	"Level8": 4,
+	"Level9": 4,
+	"Level10": 4
+}
+
 
 func _ready() -> void:
 	print("Master loaded")
@@ -65,8 +112,12 @@ func start_game() -> void:
 	_get_spawns(get_tree().get_root(), spawns)
 	
 	orb_count = 0
+	var sharpie_count = 0
+	var cthulhu_count = 0
 	
 	var first := true
+	
+	spawns.shuffle()
 	
 	for spawn in spawns:
 		var instance : Node2D
@@ -74,15 +125,32 @@ func start_game() -> void:
 			instance = PlayerScene.instance()
 			player = instance
 			first = false
-		else:
+		elif orb_count < orb_init[current_level_name]:
 			instance = OrbScene.instance()
 			orb_count += 1
+		elif sharpie_count < sharpie_init[current_level_name]:
+			instance = SharpieScene.instance()
+			var sharpie := instance as Sharpie
+			var dir := spawn.direction as Vector2
+			if dir == Vector2.ZERO:
+				dir = Vector2.UP.rotated(deg2rad(rand_range(0, 360)))
+			
+			sharpie.apply_impulse(Vector2.ZERO, dir * 100)
+			sharpie_count += 1
+		elif cthulhu_count < cthulhu_init[current_level_name]:
+			instance = CthulhuScene.instance()
+			var cthulhu := instance as Cthulhu
+			cthulhu.init(player)
+			cthulhu_count += 1
+		else:
+			break
 		
 		instance.position = spawn.position
 		get_tree().current_scene.add_child(instance)
 
 func won_level() -> void:
 	current_level += 1
+	current_level_name = "Level" + str(current_level)
 	player = null
 	change_scene("Level" + str(current_level))
 

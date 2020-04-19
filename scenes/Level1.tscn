@@ -5,17 +5,67 @@
 
 [node name="Level1" type="Node2D"]
 
-[node name="Spawn" parent="." instance=ExtResource( 3 )]
-position = Vector2( 554.371, 65.0539 )
+[node name="Spawns" type="Node2D" parent="."]
 
-[node name="Spawn2" parent="." instance=ExtResource( 3 )]
-position = Vector2( 101.823, 50.9117 )
+[node name="Spawn" parent="Spawns" instance=ExtResource( 3 )]
+position = Vector2( 345.067, 80.6102 )
 
-[node name="Spawn3" parent="." instance=ExtResource( 3 )]
-position = Vector2( 84.8529, 263.044 )
+[node name="Spawn2" parent="Spawns" instance=ExtResource( 3 )]
+position = Vector2( 94.7519, 124.451 )
 
-[node name="Spawn4" parent="." instance=ExtResource( 3 )]
-position = Vector2( 502.046, 282.843 )
+[node name="Spawn3" parent="Spawns" instance=ExtResource( 3 )]
+position = Vector2( 608.112, 135.765 )
+
+[node name="Spawn4" parent="Spawns" instance=ExtResource( 3 )]
+position = Vector2( 854.185, 94.7526 )
+
+[node name="Spawn5" parent="Spawns" instance=ExtResource( 3 )]
+position = Vector2( 1105.92, 132.936 )
+
+[node name="Spawn10" parent="Spawns" instance=ExtResource( 3 )]
+position = Vector2( 329.511, 246.073 )
+
+[node name="Spawn9" parent="Spawns" instance=ExtResource( 3 )]
+position = Vector2( 79.1956, 289.914 )
+
+[node name="Spawn8" parent="Spawns" instance=ExtResource( 3 )]
+position = Vector2( 592.556, 301.228 )
+
+[node name="Spawn7" parent="Spawns" instance=ExtResource( 3 )]
+position = Vector2( 838.629, 260.216 )
+
+[node name="Spawn6" parent="Spawns" instance=ExtResource( 3 )]
+position = Vector2( 1090.36, 298.399 )
+
+[node name="Spawn15" parent="Spawns" instance=ExtResource( 3 )]
+position = Vector2( 384.665, 421.436 )
+
+[node name="Spawn14" parent="Spawns" instance=ExtResource( 3 )]
+position = Vector2( 134.35, 465.276 )
+
+[node name="Spawn13" parent="Spawns" instance=ExtResource( 3 )]
+position = Vector2( 647.71, 476.59 )
+
+[node name="Spawn12" parent="Spawns" instance=ExtResource( 3 )]
+position = Vector2( 893.783, 435.578 )
+
+[node name="Spawn11" parent="Spawns" instance=ExtResource( 3 )]
+position = Vector2( 1145.51, 473.762 )
+
+[node name="Spawn20" parent="Spawns" instance=ExtResource( 3 )]
+position = Vector2( 318.197, 585.484 )
+
+[node name="Spawn19" parent="Spawns" instance=ExtResource( 3 )]
+position = Vector2( 67.8819, 629.325 )
+
+[node name="Spawn18" parent="Spawns" instance=ExtResource( 3 )]
+position = Vector2( 581.242, 640.639 )
+
+[node name="Spawn17" parent="Spawns" instance=ExtResource( 3 )]
+position = Vector2( 827.315, 599.627 )
+
+[node name="Spawn16" parent="Spawns" instance=ExtResource( 3 )]
+position = Vector2( 1079.04, 637.811 )
 
 [node name="Ground" type="TileMap" parent="."]
 tile_set = ExtResource( 1 )
