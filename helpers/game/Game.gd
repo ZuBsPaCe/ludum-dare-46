@@ -31,6 +31,9 @@ var orb_count : int
 var player_position : Vector2
 var player_light_radius := 0.0
 var player_light_factor := 1.0
+var player_dead := false
+var player_won := false
+
 
 onready var black_rect := $GUI/BlackRect
 onready var animation_player := $AnimationPlayer
@@ -78,7 +81,8 @@ var cthulhu_init := {
 
 func _ready() -> void:
 	print("Master loaded")
-	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
+	
+	
 
 	cursor = CursorScene.instance()
 	add_child(cursor)
@@ -112,7 +116,10 @@ func _process(delta: float) -> void:
 
 func start_game() -> void:
 	game_started = true
+	player_dead = false
+	player_won = false
 	
+	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
 	
 	var spawns := []
 	_get_spawns(get_tree().get_root(), spawns)
@@ -163,16 +170,36 @@ func start_game() -> void:
 	player_light_factor = 1.0
 
 func won_level() -> void:
+	player_won = true
 	current_level += 1
-	current_level_name = "Level" + str(current_level)
+	current_level_name = "Level" + str(current_level % level_count)
 	player = null
-	change_scene("Level" + str(current_level))
+	change_scene(current_level_name)
+
+func lost_level() -> void:
+	player = null
+	change_to_highscore()
 
 func change_scene(scene_name : String) -> void:
 	change_scene = true
 	change_scene_target = "res://scenes/" + scene_name + ".tscn"
 	
 	start_transition()
+
+func change_to_game() -> void:
+	current_level = 1
+	current_level_name = "Level1"
+	
+	player = null
+	change_scene(current_level_name)
+
+func change_to_main() -> void:
+	player = null
+	change_scene("Main")
+
+func change_to_highscore() -> void:
+	player = null
+	change_scene("Highscore")
 
 func start_transition() -> void:
 	transitioning = true
@@ -196,6 +223,11 @@ func pickup_orb(orb : Orb) -> void:
 	
 	if orb_count <= 0:
 		won_level()
+
+func check_player_collision(collision : KinematicCollision2D) -> void:
+	if collision != null && collision.collider is Player:
+		player_dead = true
+		change_to_main()
 
 func get_speed_factor(position : Vector2) -> float:
 	var max_move_distance = player_light_radius + 32.0

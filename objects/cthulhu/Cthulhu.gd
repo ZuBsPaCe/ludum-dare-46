@@ -18,6 +18,9 @@ func init(player : Node2D, dir : Vector2):
 	self.direction = dir
 
 func _physics_process(delta: float) -> void:
+	if Game.player_dead || Game.player_won:
+		return
+		
 	var target_vec := (player.position - position).normalized()
 	
 	var speed_factor = Game.get_speed_factor(position)
@@ -57,7 +60,8 @@ func _physics_process(delta: float) -> void:
 	direction = Vector2.RIGHT.rotated(angle) 
 	rotation = direction.angle() + PI
 	
-	move_and_collide(direction * real_speed * delta)
+	var collision := move_and_collide(direction * real_speed * delta)
+	Game.check_player_collision(collision)
 	
 	if direction.x <= 0:
 		body.scale.y = 1

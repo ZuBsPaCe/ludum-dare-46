@@ -28,11 +28,16 @@ func _process(delta: float) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if Game.player_dead || Game.player_won:
+		return
+	
 	var real_speed = speed * Game.get_speed_factor(position)
 	
 	var vec = direction * real_speed * delta
 	var collision : KinematicCollision2D = null
 	collision = move_and_collide(vec)
+	
+	Game.check_player_collision(collision)
 	
 	if collision:
 		vec = collision.remainder.bounce(collision.normal)
