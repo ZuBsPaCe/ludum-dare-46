@@ -28,6 +28,10 @@ var cursor : Cursor
 var player : Player
 var orb_count : int
 
+var player_position : Vector2
+var player_light_radius := 0.0
+var player_light_factor := 1.0
+
 onready var black_rect := $GUI/BlackRect
 onready var animation_player := $AnimationPlayer
 
@@ -96,6 +100,7 @@ func _process(delta: float) -> void:
 	
 	if game_started:
 		cursor.visible = (player.position - cursor.position).length() > 18
+		player_position = player.position
 	else:
 		cursor.visible = true
 	
@@ -107,6 +112,7 @@ func _process(delta: float) -> void:
 
 func start_game() -> void:
 	game_started = true
+	
 	
 	var spawns := []
 	_get_spawns(get_tree().get_root(), spawns)
@@ -124,6 +130,8 @@ func start_game() -> void:
 		if first:
 			instance = PlayerScene.instance()
 			player = instance
+			player_position = spawn.position
+			Input.warp_mouse_position(player_position)
 			first = false
 		elif orb_count < orb_init[current_level_name]:
 			instance = OrbScene.instance()
@@ -134,19 +142,25 @@ func start_game() -> void:
 			var dir := spawn.direction as Vector2
 			if dir == Vector2.ZERO:
 				dir = Vector2.UP.rotated(deg2rad(rand_range(0, 360)))
-			
-			sharpie.apply_impulse(Vector2.ZERO, dir * 100)
+			sharpie.init(dir)
 			sharpie_count += 1
 		elif cthulhu_count < cthulhu_init[current_level_name]:
 			instance = CthulhuScene.instance()
 			var cthulhu := instance as Cthulhu
-			cthulhu.init(player)
+			var dir := spawn.direction as Vector2
+			if dir == Vector2.ZERO:
+				dir = Vector2.UP.rotated(deg2rad(rand_range(0, 360)))
+			cthulhu.init(player, dir)
 			cthulhu_count += 1
 		else:
 			break
 		
 		instance.position = spawn.position
 		get_tree().current_scene.add_child(instance)
+	
+	
+	player_light_radius = 128.0 * player.scale.x
+	player_light_factor = 1.0
 
 func won_level() -> void:
 	current_level += 1
@@ -173,8 +187,26 @@ func _get_spawns(parent : Node, spawns : Array) -> void:
 			_get_spawns(node, spawns)
 
 func pickup_orb(orb : Orb) -> void:
-	return
 	orb.call_deferred("free")
 	orb_count -= 1
+	
+	player_light_radius += 32* player.scale.x
+	player_light_factor = player_light_radius / (128.0 * player.scale.x)
+	player.set_light_factor(player_light_factor)
+	
 	if orb_count <= 0:
 		won_level()
+
+func get_speed_factor(position : Vector2) -> float:
+	var max_move_distance = player_light_radius + 32.0
+	var min_move_distance = 64.0
+	
+	var player_dist = (Game.player_position - position).length()
+	
+	if player_dist >= max_move_distance:
+		return 0.0
+	
+	if player_dist <= min_move_distance:
+		return 1.0
+	
+	return (max_move_distance - player_dist) / (max_move_distance - min_move_distance)

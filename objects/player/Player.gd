@@ -2,8 +2,7 @@ extends KinematicBody2D
 
 class_name Player
 
-
-var collision
+onready var light := $Light2D
 
 func _ready() -> void:
 	 pass
@@ -17,3 +16,6 @@ func _physics_process(delta: float) -> void:
 #		if collision.collider is Orb:
 #			print("Orb Collided!")
 		pass
+
+func set_light_factor(light_factor : float) -> void:
+	light.scale = Vector2(light_factor, light_factor)
