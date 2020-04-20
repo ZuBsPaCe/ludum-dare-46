@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://objects/sharpie/sharpie-body.png" type="Texture" id=1]
 [ext_resource path="res://objects/sharpie/sharpie-mask.png" type="Texture" id=2]
@@ -6,7 +6,7 @@
 [ext_resource path="res://objects/sharpie/Sharpie.gd" type="Script" id=4]
 [ext_resource path="res://objects/player/flame.png" type="Texture" id=5]
 
-[sub_resource type="Curve" id=2]
+[sub_resource type="Curve" id=4]
 _data = [ Vector2( 0, 0.885687 ), 0.0, -0.096583, 0, 0, Vector2( 1, 0.394778 ), -1.06705, 0.0, 0, 0 ]
 
 [sub_resource type="Gradient" id=3]
@@ -15,6 +15,10 @@ colors = PoolColorArray( 1, 1, 1, 1, 1, 1, 1, 0.717647, 1, 1, 1, 0 )
 
 [sub_resource type="CircleShape2D" id=1]
 radius = 28.3754
+
+[sub_resource type="OccluderPolygon2D" id=5]
+cull_mode = 2
+polygon = PoolVector2Array( -0.294472, -22.6915, -11.6082, -18.9792, -19.9167, -9.25645, -21.8612, 0.11272, -18.5025, 10.8961, -10.3708, 19.3814, -0.648026, 22.9169, 10.4889, 19.5582, 17.7368, 12.4871, 21.9794, 0.11272, 19.8581, -10.8474, 11.196, -18.8024 )
 
 [node name="Sharpie" type="KinematicBody2D"]
 collision_layer = 4
@@ -29,7 +33,7 @@ emission_shape = 1
 emission_sphere_radius = 0.01
 spread = 0.0
 gravity = Vector2( 0, 0 )
-scale_amount_curve = SubResource( 2 )
+scale_amount_curve = SubResource( 4 )
 color_ramp = SubResource( 3 )
 __meta__ = {
 "_editor_description_": ""
@@ -55,3 +59,6 @@ texture = ExtResource( 1 )
 visible = false
 scale = Vector2( 2, 2 )
 texture = ExtResource( 2 )
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="."]
+occluder = SubResource( 5 )

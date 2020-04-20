@@ -24,6 +24,9 @@ var current_level := 1
 var current_level_name := "Level1"
 var level_count := 10
 
+var fame := 0
+var fame_timer := 0.0
+
 var cursor : Cursor
 var player : Player
 var orb_count : int
@@ -35,8 +38,12 @@ var player_dead := false
 var player_won := false
 
 
+var highscore := 0
+
+
 onready var black_rect := $GUI/BlackRect
 onready var animation_player := $AnimationPlayer
+onready var info := $GUI/Info
 
 var orb_init := {
 	"Level1": 3,
@@ -82,7 +89,7 @@ var cthulhu_init := {
 func _ready() -> void:
 	print("Master loaded")
 	
-	
+	load_highscore()
 
 	cursor = CursorScene.instance()
 	add_child(cursor)
@@ -95,6 +102,10 @@ func _process(delta: float) -> void:
 			if change_scene:
 				get_tree().change_scene(change_scene_target)
 				change_scene = false
+				if !change_scene_target.begins_with("Level"):
+					$GUI.layer = 1
+					info.visible = false
+					
 			transitioning_to_black = false
 			animation_player.play("FromBlack")
 			
@@ -105,6 +116,14 @@ func _process(delta: float) -> void:
 	if game_started:
 		cursor.visible = (player.position - cursor.position).length() > 18
 		player_position = player.position
+		
+		fame_timer += delta
+		while fame_timer > 1.0:
+			fame_timer -= 1.0
+			fame -= 1
+			if fame < 0:
+				fame = 0
+		
 	else:
 		cursor.visible = true
 	
@@ -113,13 +132,21 @@ func _process(delta: float) -> void:
 		if scene_name.begins_with("Level"):
 			start_game()
 		return
+	
+	info.text = "Orbs " + str(orb_count) + "\n" + "Fame " + str(fame)
 
 func start_game() -> void:
 	game_started = true
 	player_dead = false
 	player_won = false
 	
+	fame_timer = 0.0
+	
 	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
+	
+	$GUI.layer = 100
+	info.visible = true
+	info.text = ""
 	
 	var spawns := []
 	_get_spawns(get_tree().get_root(), spawns)
@@ -189,11 +216,18 @@ func change_scene(scene_name : String) -> void:
 func change_to_game() -> void:
 	current_level = 1
 	current_level_name = "Level1"
+	fame = 0
+	fame_timer = 0
 	
 	player = null
 	change_scene(current_level_name)
 
 func change_to_main() -> void:
+	
+	if fame > highscore:
+		highscore = fame
+		save_highscore()
+		
 	player = null
 	change_scene("Main")
 
@@ -217,6 +251,9 @@ func pickup_orb(orb : Orb) -> void:
 	orb.call_deferred("free")
 	orb_count -= 1
 	
+	fame += 10
+	fame_timer = 0
+	
 	player_light_radius += 32* player.scale.x
 	player_light_factor = player_light_radius / (128.0 * player.scale.x)
 	player.set_light_factor(player_light_factor)
@@ -228,6 +265,13 @@ func check_player_collision(collision : KinematicCollision2D) -> void:
 	if collision != null && collision.collider is Player:
 		player_dead = true
 		change_to_main()
+
+func check_enemy_collision(collision : KinematicCollision2D) -> bool:
+	if collision != null && (collision.collider is Sharpie || collision.collider is Cthulhu):
+		player_dead = true
+		change_to_main()
+		return true
+	return false
 
 func get_speed_factor(position : Vector2) -> float:
 	var max_move_distance = player_light_radius + 32.0
@@ -242,3 +286,17 @@ func get_speed_factor(position : Vector2) -> float:
 		return 1.0
 	
 	return (max_move_distance - player_dist) / (max_move_distance - min_move_distance)
+
+
+func save_highscore():
+	var f = File.new()
+	f.open("user://score.save", File.WRITE)
+	f.store_var(highscore)
+	f.close()
+
+func load_highscore():
+	var f = File.new()
+	if f.file_exists("user://score.save"):
+		f.open("user://score.save", File.READ)
+		highscore = f.get_var()
+		f.close()

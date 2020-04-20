@@ -1,0 +1,10 @@
+[gd_resource type="DynamicFont" load_steps=2 format=2]
+
+[ext_resource path="res://font/xotax.ttf" type="DynamicFontData" id=1]
+
+[resource]
+size = 30
+outline_size = 10
+outline_color = Color( 0.12549, 0.223529, 0.309804, 0.392157 )
+use_filter = true
+font_data = ExtResource( 1 )

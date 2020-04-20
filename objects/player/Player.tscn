@@ -54,52 +54,64 @@ shape = SubResource( 4 )
 [node name="Light2D" type="Light2D" parent="."]
 texture = ExtResource( 4 )
 mode = 3
+shadow_enabled = true
+shadow_gradient_length = 2.0
+shadow_filter = 3
+shadow_filter_smooth = 20.0
 
 [node name="Black1" type="Sprite" parent="Light2D"]
 light_mask = 0
 position = Vector2( 256, 0 )
+scale = Vector2( 1.1, 1.1 )
 z_index = 90
 texture = ExtResource( 5 )
 
 [node name="Black2" type="Sprite" parent="Light2D"]
 light_mask = 0
 position = Vector2( 256, 256 )
+scale = Vector2( 1.1, 1.1 )
 z_index = 90
 texture = ExtResource( 5 )
 
 [node name="Black3" type="Sprite" parent="Light2D"]
 light_mask = 0
 position = Vector2( 0, 256 )
+scale = Vector2( 1.1, 1.1 )
 z_index = 90
 texture = ExtResource( 5 )
 
 [node name="Black4" type="Sprite" parent="Light2D"]
 light_mask = 0
 position = Vector2( -256, 256 )
+scale = Vector2( 1.1, 1.1 )
 z_index = 90
 texture = ExtResource( 5 )
 
 [node name="Black5" type="Sprite" parent="Light2D"]
 light_mask = 0
 position = Vector2( -256, 0 )
+scale = Vector2( 1.1, 1.1 )
 z_index = 90
 texture = ExtResource( 5 )
 
 [node name="Black6" type="Sprite" parent="Light2D"]
 light_mask = 0
 position = Vector2( -256, -256 )
+scale = Vector2( 1.1, 1.1 )
 z_index = 90
 texture = ExtResource( 5 )
 
 [node name="Black7" type="Sprite" parent="Light2D"]
 light_mask = 0
 position = Vector2( 0, -256 )
+scale = Vector2( 1.1, 1.1 )
 z_index = 90
 texture = ExtResource( 5 )
 
 [node name="Black8" type="Sprite" parent="Light2D"]
 light_mask = 0
 position = Vector2( 256, -256 )
+scale = Vector2( 1.1, 1.1 )
 z_index = 90
 texture = ExtResource( 5 )
 
