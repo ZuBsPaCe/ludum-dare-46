@@ -50,25 +50,25 @@ var orb_init := {
 	"Level2": 3,
 	"Level3": 4,
 	"Level4": 4,
-	"Level5": 5,
+	"Level5": 4,
 	"Level6": 5,
-	"Level7": 6,
+	"Level7": 5,
 	"Level8": 6,
-	"Level9": 7,
+	"Level9": 6,
 	"Level10": 7
 }
 
 var sharpie_init := {
 	"Level1": 3,
 	"Level2": 3,
-	"Level3": 4,
+	"Level3": 3,
 	"Level4": 4,
-	"Level5": 5,
-	"Level6": 5,
-	"Level7": 6,
-	"Level8": 6,
-	"Level9": 7,
-	"Level10": 7
+	"Level5": 4,
+	"Level6": 4,
+	"Level7": 5,
+	"Level8": 5,
+	"Level9": 5,
+	"Level10": 6
 }
 
 
@@ -76,13 +76,13 @@ var cthulhu_init := {
 	"Level1": 1,
 	"Level2": 1,
 	"Level3": 1,
-	"Level4": 2,
+	"Level4": 1,
 	"Level5": 2,
-	"Level6": 3,
-	"Level7": 3,
-	"Level8": 4,
-	"Level9": 4,
-	"Level10": 4
+	"Level6": 2,
+	"Level7": 2,
+	"Level8": 2,
+	"Level9": 3,
+	"Level10": 3
 }
 
 
@@ -95,6 +95,8 @@ func _ready() -> void:
 	add_child(cursor)
 
 func _process(delta: float) -> void:
+	info.text = "Orbs " + str(orb_count) + "\n" + "Fame " + str(fame)
+	
 	if transitioning:
 		if animation_player.is_playing():
 			return
@@ -132,10 +134,12 @@ func _process(delta: float) -> void:
 		if scene_name.begins_with("Level"):
 			start_game()
 		return
-	
-	info.text = "Orbs " + str(orb_count) + "\n" + "Fame " + str(fame)
+
 
 func start_game() -> void:
+	if !game_started && !$AudioStreamPlayer.playing:
+		$AudioStreamPlayer.play()
+	
 	game_started = true
 	player_dead = false
 	player_won = false
@@ -159,6 +163,8 @@ func start_game() -> void:
 	
 	spawns.shuffle()
 	
+	var more = current_level / level_count
+	
 	for spawn in spawns:
 		var instance : Node2D
 		if first:
@@ -167,10 +173,10 @@ func start_game() -> void:
 			player_position = spawn.position
 			Input.warp_mouse_position(player_position)
 			first = false
-		elif orb_count < orb_init[current_level_name]:
+		elif orb_count < orb_init[current_level_name] + more:
 			instance = OrbScene.instance()
 			orb_count += 1
-		elif cthulhu_count < cthulhu_init[current_level_name]:
+		elif cthulhu_count < cthulhu_init[current_level_name] + more:
 			instance = CthulhuScene.instance()
 			var cthulhu := instance as Cthulhu
 			var dir := spawn.direction as Vector2
@@ -178,7 +184,7 @@ func start_game() -> void:
 				dir = Vector2.UP.rotated(deg2rad(rand_range(0, 360)))
 			cthulhu.init(player, dir)
 			cthulhu_count += 1
-		elif sharpie_count < sharpie_init[current_level_name]:
+		elif sharpie_count < sharpie_init[current_level_name] + more:
 			instance = SharpieScene.instance()
 			var sharpie := instance as Sharpie
 			var dir := spawn.direction as Vector2
@@ -223,6 +229,8 @@ func change_to_game() -> void:
 	change_scene(current_level_name)
 
 func change_to_main() -> void:
+	$AudioStreamPlayer.stop()
+	$DeathSound.play()
 	
 	if fame > highscore:
 		highscore = fame

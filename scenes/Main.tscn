@@ -1,10 +1,12 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://helpers/main/Main.gd" type="Script" id=1]
 [ext_resource path="res://helpers/screens/main.png" type="Texture" id=2]
 [ext_resource path="res://font/font.tres" type="DynamicFont" id=3]
 [ext_resource path="res://theme/theme.tres" type="Theme" id=4]
 [ext_resource path="res://font/font_small.tres" type="DynamicFont" id=5]
+[ext_resource path="res://music/intro.ogg" type="AudioStream" id=6]
+[ext_resource path="res://font/very_font_small.tres" type="DynamicFont" id=7]
 
 [node name="Main" type="Node2D"]
 script = ExtResource( 1 )
@@ -73,5 +75,24 @@ text = "Highscore: 0"
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Godot" type="Label" parent="CanvasLayer"]
+margin_left = 31.113
+margin_top = 653.366
+margin_right = 554.113
+margin_bottom = 696.366
+theme = ExtResource( 4 )
+custom_fonts/font = ExtResource( 7 )
+custom_colors/font_color = Color( 0.964706, 0.839216, 0.741176, 1 )
+text = "Made by ZuBsPaCe with Love and Godot
+For Ludum Dare 46. Thanks for playing!"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 6 )
+volume_db = -20.0
+autoplay = true
 [connection signal="pressed" from="CanvasLayer/StartButton" to="." method="_on_StartButton_pressed"]
 [connection signal="pressed" from="CanvasLayer/ExitButton" to="." method="_on_ExitButton_pressed"]
