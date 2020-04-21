@@ -1,10 +1,11 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://objects/player/player-01.png" type="Texture" id=1]
 [ext_resource path="res://objects/player/Player.gd" type="Script" id=2]
 [ext_resource path="res://objects/player/flame.png" type="Texture" id=3]
 [ext_resource path="res://helpers/light/player-light.png" type="Texture" id=4]
 [ext_resource path="res://helpers/light/black-256.png" type="Texture" id=5]
+[ext_resource path="res://sound/pickup.wav" type="AudioStream" id=6]
 
 [sub_resource type="Curve" id=5]
 _data = [ Vector2( 0, 0.885687 ), 0.0, -0.096583, 0, 0, Vector2( 1, 0.394778 ), -1.06705, 0.0, 0, 0 ]
@@ -210,3 +211,7 @@ light_mask = 0
 position = Vector2( 512, -256 )
 z_index = 90
 texture = ExtResource( 5 )
+
+[node name="PickupSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 6 )
+volume_db = -20.0

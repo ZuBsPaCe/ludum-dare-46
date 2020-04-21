@@ -10,8 +10,12 @@ onready var body := $Body
 const speed := 150.0
 const angular_speed := deg2rad(180.0)
 
+onready var audio := $AudioStreamPlayer
+
 func _ready() -> void:
-	pass
+	audio.volume_db = -80
+	#audio.play(randf() * audio.stream.get_length())
+	audio.play()
 
 func init(player : Node2D, dir : Vector2):
 	self.player = player
@@ -24,6 +28,7 @@ func _physics_process(delta: float) -> void:
 	var target_vec := (player.position - position).normalized()
 	
 	var speed_factor = Game.get_speed_factor(position)
+	var factor = speed_factor
 	var real_angular_speed = angular_speed * speed_factor
 	var real_speed = speed * speed_factor
 	
@@ -67,4 +72,9 @@ func _physics_process(delta: float) -> void:
 		body.scale.y = 1
 	else:
 		body.scale.y = -1
+	
+	var volume = -80.0 + factor * 120.0
+	if volume > -20.0:
+		volume = -20.0
+	audio.volume_db = volume
 	

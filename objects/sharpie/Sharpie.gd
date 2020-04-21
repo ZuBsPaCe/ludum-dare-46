@@ -12,11 +12,15 @@ const speed := 150.0
 
 var time := 0.0
 
+onready var audio := $AudioStreamPlayer
+
 func init(dir : Vector2):
 	self.direction = dir
 
 func _ready() -> void:
-	pass
+	audio.volume_db = -80
+	#audio.play(randf() * audio.stream.get_length())
+	audio.play()
 	
 func _process(delta: float) -> void:
 	time += delta
@@ -31,7 +35,8 @@ func _physics_process(delta: float) -> void:
 	if Game.player_dead || Game.player_won:
 		return
 	
-	var real_speed = speed * Game.get_speed_factor(position)
+	var factor = Game.get_speed_factor(position)
+	var real_speed = speed * factor
 	
 	var vec = direction * real_speed * delta
 	var collision : KinematicCollision2D = null
@@ -43,4 +48,9 @@ func _physics_process(delta: float) -> void:
 		vec = collision.remainder.bounce(collision.normal)
 		direction = direction.bounce(collision.normal)
 		move_and_collide(vec)
+	
+	var volume = -80.0 + factor * 120.0
+	if volume > -20.0:
+		volume = -20.0
+	audio.volume_db = volume
 

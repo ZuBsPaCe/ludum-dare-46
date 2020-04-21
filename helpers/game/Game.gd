@@ -170,14 +170,6 @@ func start_game() -> void:
 		elif orb_count < orb_init[current_level_name]:
 			instance = OrbScene.instance()
 			orb_count += 1
-		elif sharpie_count < sharpie_init[current_level_name]:
-			instance = SharpieScene.instance()
-			var sharpie := instance as Sharpie
-			var dir := spawn.direction as Vector2
-			if dir == Vector2.ZERO:
-				dir = Vector2.UP.rotated(deg2rad(rand_range(0, 360)))
-			sharpie.init(dir)
-			sharpie_count += 1
 		elif cthulhu_count < cthulhu_init[current_level_name]:
 			instance = CthulhuScene.instance()
 			var cthulhu := instance as Cthulhu
@@ -186,6 +178,14 @@ func start_game() -> void:
 				dir = Vector2.UP.rotated(deg2rad(rand_range(0, 360)))
 			cthulhu.init(player, dir)
 			cthulhu_count += 1
+		elif sharpie_count < sharpie_init[current_level_name]:
+			instance = SharpieScene.instance()
+			var sharpie := instance as Sharpie
+			var dir := spawn.direction as Vector2
+			if dir == Vector2.ZERO:
+				dir = Vector2.UP.rotated(deg2rad(rand_range(0, 360)))
+			sharpie.init(dir)
+			sharpie_count += 1
 		else:
 			break
 		
@@ -257,6 +257,8 @@ func pickup_orb(orb : Orb) -> void:
 	player_light_radius += 32* player.scale.x
 	player_light_factor = player_light_radius / (128.0 * player.scale.x)
 	player.set_light_factor(player_light_factor)
+	
+	player.pickup_sound()
 	
 	if orb_count <= 0:
 		won_level()

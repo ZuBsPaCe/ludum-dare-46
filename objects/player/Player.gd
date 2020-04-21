@@ -4,7 +4,7 @@ class_name Player
 
 onready var light := $Light2D
 
-
+onready var pickup_sound := $PickupSound
 
 const speed := 500
 
@@ -37,3 +37,6 @@ func _physics_process(delta: float) -> void:
 
 func set_light_factor(light_factor : float) -> void:
 	light.scale = Vector2(light_factor, light_factor)
+
+func pickup_sound():
+	pickup_sound.play()
