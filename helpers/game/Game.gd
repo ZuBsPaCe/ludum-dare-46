@@ -29,7 +29,6 @@ var level_count := 10
 var fame := 0
 var fame_timer := 0.0
 
-var cursor : Cursor
 var player : Player
 var orb_count : int
 
@@ -53,6 +52,7 @@ onready var black_rect := $GUI/BlackRect
 onready var animation_player := $AnimationPlayer
 onready var info := $GUI/Info
 onready var start_level_button := $GUI/StartLevelButton
+onready var cursor := $Cursor
 
 var start_game_counter = 0
 
@@ -101,9 +101,6 @@ func _ready() -> void:
 	print("Master loaded")
 	
 	load_highscore()
-
-	cursor = CursorScene.instance()
-	add_child(cursor)
 	
 	$GUI/BlackRect.visible = false
 	$GUI/Tip.visible = false
@@ -125,6 +122,7 @@ func _input(event):
 		$GUI/Intro3a.visible = false
 		$GUI/Intro3b.visible = false
 		$IntroAnimSound.stop()
+		$Cursor/Sprite.visible = true
 	
 	if event.is_action_pressed("toggle_fullscreen") && OS.get_name() != "HTML5":
 		OS.window_fullscreen = !OS.window_fullscreen
@@ -284,9 +282,11 @@ func start_game() -> void:
 			instance.position = spawn.position
 			get_tree().current_scene.add_child(instance)
 	
-	if current_level > 10:
+	var king_sharpie_counter = current_level
+	while king_sharpie_counter > 10:
 		var king_sharpie = KingSharpieScene.instance()
 		get_tree().current_scene.add_child(king_sharpie)
+		king_sharpie_counter -= 10
 	
 	player_light_radius = 128.0 * player.scale.x
 	player_light_factor = 1.0

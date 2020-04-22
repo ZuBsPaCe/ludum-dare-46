@@ -59,10 +59,10 @@ margin_bottom = 591.686
 rect_pivot_offset = Vector2( 255.136, 90 )
 theme = ExtResource( 3 )
 custom_colors/font_color = Color( 0.964706, 0.839216, 0.741176, 1 )
-text = "Best
-daily
-Scores"
+text = "Hall of
+fame"
 align = 1
+valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -92,13 +92,13 @@ margin_right = 531.414
 margin_bottom = 197.574
 theme = ExtResource( 3 )
 custom_colors/font_color = Color( 0.964706, 0.839216, 0.741176, 1 )
-text = "You have a new highscore!"
+text = "Personal Highscore!"
 align = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="New Daily Highscore" type="Label" parent="CanvasLayer"]
+[node name="New Online Highscore" type="Label" parent="CanvasLayer"]
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = -657.279
@@ -107,7 +107,7 @@ margin_right = 653.721
 margin_bottom = 281.012
 theme = ExtResource( 3 )
 custom_colors/font_color = Color( 0.964706, 0.839216, 0.741176, 1 )
-text = "You are on the daily scores!"
+text = "Worldwide Highscore!"
 align = 1
 __meta__ = {
 "_edit_use_anchors_": false

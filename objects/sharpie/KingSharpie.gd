@@ -12,7 +12,9 @@ const speed := 80.0
 
 var time := 0.0
 
-onready var audio := $AudioStreamPlayer
+onready var audio1 := $AudioStreamPlayer1
+
+var default_audio1_volume := 0.0
 
 var target := Vector2()
 var dir := Vector2()
@@ -24,11 +26,13 @@ func init(dir : Vector2):
 	self.direction = dir
 
 func _ready() -> void:
+	default_audio1_volume = $AudioStreamPlayer1.volume_db
 	restart()
 
 func restart() -> void:
-	audio.volume_db = -80
-	audio.play()
+	audio1.volume_db = -80
+	audio1.play()
+	
 	
 	var x : float
 	var y : float
@@ -95,8 +99,9 @@ func _physics_process(delta: float) -> void:
 	
 	var factor = Game.get_speed_factor(position)
 	
-	var volume = -80.0 + factor * 120.0
-	if volume > -20.0:
-		volume = -20.0
-	audio.volume_db = volume
+	var volume1 = -80.0 + factor * 160.0
+	if volume1 > default_audio1_volume:
+		volume1 = default_audio1_volume
+	audio1.volume_db = volume1
+
 

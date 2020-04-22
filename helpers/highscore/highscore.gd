@@ -10,7 +10,7 @@ func _ready() -> void:
 	
 	$CanvasLayer/ScoreLabel.text = "Score: %s" % Game.fame
 	$"CanvasLayer/New Personal Highscore".visible = Game.personal_highscore_broken
-	$"CanvasLayer/New Daily Highscore".visible = false
+	$"CanvasLayer/New Online Highscore".visible = false
 	$"CanvasLayer/GlobalLabel".visible = false
 	$CanvasLayer/Nickname.text = Game.nickname
 	
@@ -20,7 +20,7 @@ func _ready() -> void:
 	http_request.connect("request_completed", self, "_http_request_completed")
 	
 	# Perform the HTTP request. The URL below returns some JSON as of writing.
-	var error = http_request.request("https://www.zubspace.com/highscore/list-daily?game=living-light")
+	var error = http_request.request("https://www.zubspace.com/highscore/list-alltime?game=living-light")
 	if error != OK:
 		Game.switch_to_main()
 		#push_error("An error occurred in the HTTP request.")
@@ -58,6 +58,9 @@ func _http_request_completed(result, response_code, headers, body):
 		var player = response.Players[i]
 		player = player.strip_escapes().strip_edges()
 		
+		if player.to_lower() == "zubspace":
+			continue
+		
 		entry.get_node("Rank").text = str(i + 1)
 		entry.get_node("Name").text = player
 		entry.get_node("Level").text = str(response.Levels[i])
@@ -73,7 +76,7 @@ func _http_request_completed(result, response_code, headers, body):
 			entry.get_node("Score").modulate = Color.green
 			
 			if Game.fame > 0:
-				$"CanvasLayer/New Daily Highscore".visible = true
+				$"CanvasLayer/New Online Highscore".visible = true
 	
 	do_scroll -= 5
 	
