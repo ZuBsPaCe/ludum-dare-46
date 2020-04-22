@@ -1,47 +1,26 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://objects/sharpie/sharpie-body.png" type="Texture" id=1]
 [ext_resource path="res://objects/sharpie/sharpie-mask.png" type="Texture" id=2]
 [ext_resource path="res://objects/sharpie/sharpie-spikes.png" type="Texture" id=3]
-[ext_resource path="res://objects/sharpie/Sharpie.gd" type="Script" id=4]
-[ext_resource path="res://objects/player/flame.png" type="Texture" id=5]
+[ext_resource path="res://objects/sharpie/KingSharpie.gd" type="Script" id=4]
 [ext_resource path="res://sound/rotation.wav" type="AudioStream" id=6]
 
-[sub_resource type="Curve" id=1]
-_data = [ Vector2( 0, 0.885687 ), 0.0, -0.096583, 0, 0, Vector2( 1, 0.394778 ), -1.06705, 0.0, 0, 0 ]
+[sub_resource type="CircleShape2D" id=1]
+radius = 30.6026
 
-[sub_resource type="Gradient" id=2]
-offsets = PoolRealArray( 0, 0.651724, 1 )
-colors = PoolColorArray( 1, 1, 1, 1, 1, 1, 1, 0.717647, 1, 1, 1, 0 )
-
-[sub_resource type="CircleShape2D" id=3]
-radius = 28.3754
-
-[sub_resource type="OccluderPolygon2D" id=4]
+[sub_resource type="OccluderPolygon2D" id=2]
 cull_mode = 2
 polygon = PoolVector2Array( -0.294472, -22.6915, -11.6082, -18.9792, -19.9167, -9.25645, -21.8612, 0.11272, -18.5025, 10.8961, -10.3708, 19.3814, -0.648026, 22.9169, 10.4889, 19.5582, 17.7368, 12.4871, 21.9794, 0.11272, 19.8581, -10.8474, 11.196, -18.8024 )
 
-[node name="Sharpie" type="KinematicBody2D"]
-collision_layer = 4
-collision_mask = 15
+[node name="KingSharpie" type="KinematicBody2D"]
+scale = Vector2( 5, 5 )
+collision_layer = 1024
+collision_mask = 2
 script = ExtResource( 4 )
 
-[node name="CPUParticles2D" type="CPUParticles2D" parent="."]
-amount = 3
-local_coords = false
-texture = ExtResource( 5 )
-emission_shape = 1
-emission_sphere_radius = 0.01
-spread = 0.0
-gravity = Vector2( 0, 0 )
-scale_amount_curve = SubResource( 1 )
-color_ramp = SubResource( 2 )
-__meta__ = {
-"_editor_description_": ""
-}
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource( 3 )
+shape = SubResource( 1 )
 
 [node name="Spikes1" type="Sprite" parent="."]
 scale = Vector2( 2, 2 )
@@ -57,12 +36,12 @@ scale = Vector2( 2, 2 )
 texture = ExtResource( 1 )
 
 [node name="Mask" type="Sprite" parent="."]
-visible = false
 scale = Vector2( 2, 2 )
 texture = ExtResource( 2 )
 
 [node name="LightOccluder2D" type="LightOccluder2D" parent="."]
-occluder = SubResource( 4 )
+occluder = SubResource( 2 )
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 6 )
+pitch_scale = 0.75
