@@ -43,6 +43,7 @@ var personal_highscore := 0
 var personal_highscore_broken := false
 var highscore_id := 0
 var nickname := "Player"
+var client_id := 0
 
 var wait_for_start_level_button := false
 var wait_for_start_level_button_timer := 0.0
@@ -54,7 +55,8 @@ onready var info := $GUI/Info
 onready var start_level_button := $GUI/StartLevelButton
 onready var cursor := $Cursor
 
-var start_game_counter = 0
+var start_game_counter := 0
+var show_pickup_orbs_hint := true
 
 var orb_init := {
 	"Level1": 3,
@@ -166,10 +168,10 @@ func _process(delta: float) -> void:
 				button.text = "Click Me"
 			elif current_level > level_count:
 				var motivations = [
-					"Really?", "How?", "Cheater", "LOL",
+					"Really?", "How?", "Cheater..", "LOL",
 					"Erm...", "No way", "OMG", "Please no",
 					"Nooo!", "Are you sure?", "Watch out", "What?",
-					"Does it ever end?", "You broke the game", "Take a break", 
+					"Does it ever end?", "Take a break", 
 					"Hell", "Ouch!"]
 				button.text = motivations[randi() % motivations.size()]
 			else:
@@ -177,7 +179,8 @@ func _process(delta: float) -> void:
 					"Alright!", "Wow!", "Good Job", "Cool",
 					"Nice!", "Hell Yeah", "Great", "Let's go",
 					"Just do it", "Awesome", "Bingo", "Too easy",
-					"You own", "Well done", "Top-Notch", "Epic", "Solid"]
+					"You own", "Well done", "Top-Notch", "Epic", "Solid",
+					"Perfect"]
 				button.text = motivations[randi() % motivations.size()]
 			
 			start_level_button.visible = true
@@ -303,6 +306,8 @@ func won_level() -> void:
 	player = null
 	spawns = []
 	
+	show_pickup_orbs_hint = false
+	
 	change_scene(current_level_name)
 
 func lost_level() -> void:
@@ -338,7 +343,12 @@ func change_scene(scene_name : String) -> void:
 			"If you see King Sharpie: run.",
 			"Nobody knows where they came from."]
 		
-		$GUI/Tip.text = tips[randi() % tips.size()]
+		var tip = tips[randi() % tips.size()]
+		
+		if show_pickup_orbs_hint:
+			tip = "Pick up all white orbs."
+		
+		$GUI/Tip.text = tip
 		start_custom_transition("ToBlackWithTip")
 	else:
 		start_transition()
@@ -468,18 +478,40 @@ func get_speed_factor(position : Vector2) -> float:
 
 func save_highscore():
 	var f = File.new()
-	f.open("user://score.save", File.WRITE)
+	f.open("user://settings.save", File.WRITE)
 	f.store_var(personal_highscore)
 	f.store_var(nickname)
+	f.store_var(client_id)
+	
+	if OS.get_name() != "HTML5":
+		f.store_var(OS.window_fullscreen)
+		f.store_var(OS.window_size)
+	else:
+		f.store_var(false)
+		f.store_var(OS.window_size)
+	
 	f.close()
 
 func load_highscore():
 	var f = File.new()
-	if f.file_exists("user://score.save"):
-		f.open("user://score.save", File.READ)
+	if f.file_exists("user://settings.save"):
+		f.open("user://settings.save", File.READ)
 		personal_highscore = f.get_var()
 		nickname = f.get_var()
+		client_id = f.get_var()
+		
+		if OS.get_name() != "HTML5":
+			var fullscreen = f.get_var()
+			var window_size = f.get_var()
+			
+			if !fullscreen:
+				OS.window_fullscreen = false
+				OS.window_size = window_size
+		
 		f.close()
+	else:
+		client_id = randi()
+		save_highscore()
 
 
 func _on_StartLevelButton_pressed() -> void:
@@ -496,7 +528,7 @@ func start_highscore() -> void:
 	add_child(http_request)
 	http_request.connect("request_completed", self, "_start_highscore_completed")
 	
-	var error = http_request.request("https://www.zubspace.com/highscore/start?game=living-light&player=%s" % nickname.percent_encode())
+	var error = http_request.request("https://www.zubspace.com/highscore/start?client=%s&game=living-light&player=%s" % [client_id, nickname.percent_encode()])
 	if error != OK:
 		print("Start highscore error")
 
@@ -529,7 +561,7 @@ func stop_highscore() -> void:
 		# Please don't cheat. Thank you :)
 		id = highscore_id/2 + (highscore_id % (fame + current_level))
 	
-	var error = http_request.request("https://www.zubspace.com/highscore/stop?game=living-light&level=%s&player=%s&id=%s&score=%s" % [current_level, nickname.percent_encode(), id, fame])
+	var error = http_request.request("https://www.zubspace.com/highscore/stop?client=%s&game=living-light&level=%s&player=%s&id=%s&score=%s" % [client_id, current_level, nickname.percent_encode(), id, fame])
 	if error != OK:
 		print("Stop highscore error")
 
