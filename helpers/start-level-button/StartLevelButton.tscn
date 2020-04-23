@@ -23,9 +23,9 @@ __meta__ = {
 }
 
 [node name="Button" type="Button" parent="."]
-margin_left = -50.0
+margin_left = -100.0
 margin_top = -50.0
-margin_right = 50.0
+margin_right = 100.0
 margin_bottom = 50.0
 theme = ExtResource( 2 )
 custom_fonts/font = ExtResource( 3 )

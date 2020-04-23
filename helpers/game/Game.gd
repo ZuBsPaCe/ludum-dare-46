@@ -166,13 +166,24 @@ func _process(delta: float) -> void:
 			
 			if current_level == 1:
 				button.text = "Click Me"
+			elif current_level == 11:
+				button.text = "Run!"
+			elif current_level == 21:
+				button.text = "Are you serious?"
+			elif current_level == 31:
+				button.text = "Cheater..."
+			elif current_level == 41:
+				button.text = "Please stop!"
+			elif current_level == 51:
+				button.text = "Ok. You've won! :)"
 			elif current_level > level_count:
 				var motivations = [
-					"Really?", "How?", "Cheater..", "LOL",
+					"Really?", "How?", "LOL", "I'm afraid",
 					"Erm...", "No way", "OMG", "Please no",
 					"Nooo!", "Are you sure?", "Watch out", "What?",
 					"Does it ever end?", "Take a break", 
-					"Hell", "Ouch!"]
+					"Hell", "Ouch!", "Oh dear..", "Watch out!",
+					"Impossible", "..."]
 				button.text = motivations[randi() % motivations.size()]
 			else:
 				var motivations = [
@@ -180,11 +191,12 @@ func _process(delta: float) -> void:
 					"Nice!", "Hell Yeah", "Great", "Let's go",
 					"Just do it", "Awesome", "Bingo", "Too easy",
 					"You own", "Well done", "Top-Notch", "Epic", "Solid",
-					"Perfect"]
+					"Perfect", "Excellent"]
 				button.text = motivations[randi() % motivations.size()]
 			
 			start_level_button.visible = true
 			start_level_button.set_position(spawns[0].position)
+			$GUI/StartLevelButton/Button.visible = true
 		
 		
 		if wait_for_start_level_button_timer > 0:
@@ -288,6 +300,7 @@ func start_game() -> void:
 	var king_sharpie_counter = current_level
 	while king_sharpie_counter > 10:
 		var king_sharpie = KingSharpieScene.instance()
+		king_sharpie.init()
 		get_tree().current_scene.add_child(king_sharpie)
 		king_sharpie_counter -= 10
 	

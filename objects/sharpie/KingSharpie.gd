@@ -22,18 +22,16 @@ var travel := 0.0
 
 var stop_rotation := false
 
-func init(dir : Vector2):
-	self.direction = dir
-
-func _ready() -> void:
+func init():
 	default_audio1_volume = $AudioStreamPlayer1.volume_db
 	restart()
 
-func restart() -> void:
+func _ready() -> void:
 	audio1.volume_db = -80
 	audio1.play()
-	
-	
+
+func restart() -> void:
+
 	var x : float
 	var y : float
 	
@@ -60,7 +58,9 @@ func restart() -> void:
 			x = 1280 + offset
 			target.x = -offset
 	
+	
 	position = Vector2(x, y)
+	
 	dir = target - position
 	travel = dir.length()
 	dir = dir.normalized()
