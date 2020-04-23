@@ -58,6 +58,9 @@ onready var cursor := $Cursor
 var start_game_counter := 0
 var show_pickup_orbs_hint := true
 
+const min_nickname_size := 3
+const max_nickname_size := 16
+
 var orb_init := {
 	"Level1": 3,
 	"Level2": 3,
@@ -534,7 +537,7 @@ func _on_StartLevelButton_pressed() -> void:
 func start_highscore() -> void:
 	highscore_id = 0
 	
-	if nickname.to_lower() == "player" || nickname.length() < 3 || nickname.length() > 12:
+	if nickname.to_lower() == "player" || nickname.length() < min_nickname_size || nickname.length() > max_nickname_size:
 		return
 	
 	var http_request = HTTPRequest.new()

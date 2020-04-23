@@ -26,12 +26,13 @@ func _ready() -> void:
 	$CanvasLayer/ScrollContainerAlltime.visible = false
 	$CanvasLayer/Nickname.text = Game.nickname
 	
+	_check_nickname()
 	
 	var http_request = HTTPRequest.new()
 	add_child(http_request)
 	http_request.connect("request_completed", self, "_get_dynamic_results_completed")
 	http_request.request("https://www.zubspace.com/highscore/list-dynamic?client=%s&game=living-light" % Game.client_id)
-	
+
 	var http_request2 = HTTPRequest.new()
 	add_child(http_request2)
 	http_request2.connect("request_completed", self, "_get_alltime_results_completed")
@@ -211,12 +212,39 @@ func _on_ContinueButton_pressed() -> void:
 	Game.change_to_main()
 
 
-func _on_Nickname_text_changed() -> void:
-	if nickname_input.text.length() >= 12:
+func _check_nickname():
+	if nickname_input.text.length() >= Game.max_nickname_size:
 		var col = nickname_input.cursor_get_column()
-		nickname_input.text = nickname_input.text.substr(0, 12)
-		if col > 12:
-			col = 12
+		nickname_input.text = nickname_input.text.substr(0, Game.max_nickname_size)
+		if col > Game.max_nickname_size:
+			col = Game.max_nickname_size
 		nickname_input.cursor_set_column(col)
-		
+	
+	var test = nickname_input.text.strip_edges()
+	if test.length() < Game.min_nickname_size || test.length() > Game.max_nickname_size:
+		$CanvasLayer/ContinueButton.disabled = true
+	else:
+		$CanvasLayer/ContinueButton.disabled = false
 
+func _on_Nickname_text_changed() -> void:
+	_check_nickname()
+	
+
+func _on_Nickname_gui_input(event: InputEvent) -> void:
+	if !event.is_action_pressed("input_clicked"):
+		return
+	
+	if OS.get_name() != "HTML5" || !OS.has_feature('JavaScript') || !OS.has_touchscreen_ui_hint():
+		return
+	
+	# https://godotengine.org/qa/58927/virtual-keyboard-workaround-in-html5?show=58996#c58996
+	var entered = JavaScript.eval(
+		"prompt('%s', '%s');" % ["Your nickname:", nickname_input.text], 
+		true)
+	
+	if entered != null && entered.length() >= Game.min_nickname_size:
+		if entered.length() >= Game.max_nickname_size:
+			entered = entered.substr(0, Game.max_nickname_size)
+		nickname_input.text = entered
+	
+	_check_nickname()
