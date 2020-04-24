@@ -61,6 +61,9 @@ var show_pickup_orbs_hint := true
 const min_nickname_size := 3
 const max_nickname_size := 16
 
+const base_url := "https://www.zubspace.com"
+#const base_url := "http://www.zubspace-local.com:8080"
+
 var orb_init := {
 	"Level1": 3,
 	"Level2": 3,
@@ -105,6 +108,7 @@ var cthulhu_init := {
 func _ready() -> void:
 	print("Master loaded")
 	
+	randomize()
 	load_highscore()
 	
 	$GUI/BlackRect.visible = false
@@ -527,6 +531,8 @@ func load_highscore():
 		f.close()
 	else:
 		client_id = randi()
+		
+		nickname = "Player " + str(randi() % (10000-100) + 100)
 		save_highscore()
 
 
@@ -534,17 +540,22 @@ func _on_StartLevelButton_pressed() -> void:
 	wait_for_start_level_button = false
 	
 
+func check_nickname(nickname : String) -> bool:
+	var check_nickname = nickname.strip_edges()
+	return check_nickname.length() >= min_nickname_size && check_nickname.length() <= max_nickname_size
+	
+
 func start_highscore() -> void:
 	highscore_id = 0
 	
-	if nickname.to_lower() == "player" || nickname.length() < min_nickname_size || nickname.length() > max_nickname_size:
+	if !check_nickname(nickname):
 		return
 	
 	var http_request = HTTPRequest.new()
 	add_child(http_request)
 	http_request.connect("request_completed", self, "_start_highscore_completed")
 	
-	var error = http_request.request("https://www.zubspace.com/highscore/start?client=%s&game=living-light&player=%s" % [client_id, nickname.percent_encode()])
+	var error = http_request.request(Game.base_url + "/highscore/start?client=%s&game=living-light&player=%s" % [client_id, nickname.percent_encode()])
 	if error != OK:
 		print("Start highscore error")
 
@@ -577,7 +588,7 @@ func stop_highscore() -> void:
 		# Please don't cheat. Thank you :)
 		id = highscore_id/2 + (highscore_id % (fame + current_level))
 	
-	var error = http_request.request("https://www.zubspace.com/highscore/stop?client=%s&game=living-light&level=%s&player=%s&id=%s&score=%s" % [client_id, current_level, nickname.percent_encode(), id, fame])
+	var error = http_request.request(Game.base_url + "/highscore/stop?client=%s&game=living-light&level=%s&player=%s&id=%s&score=%s" % [client_id, current_level, nickname.percent_encode(), id, fame])
 	if error != OK:
 		print("Stop highscore error")
 

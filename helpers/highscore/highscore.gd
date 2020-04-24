@@ -31,12 +31,12 @@ func _ready() -> void:
 	var http_request = HTTPRequest.new()
 	add_child(http_request)
 	http_request.connect("request_completed", self, "_get_dynamic_results_completed")
-	http_request.request("https://www.zubspace.com/highscore/list-dynamic?client=%s&game=living-light" % Game.client_id)
+	http_request.request(Game.base_url + "/highscore/list-dynamic?client=%s&game=living-light" % Game.client_id)
 
 	var http_request2 = HTTPRequest.new()
 	add_child(http_request2)
 	http_request2.connect("request_completed", self, "_get_alltime_results_completed")
-	http_request2.request("https://www.zubspace.com/highscore/list-alltime?client=%s&game=living-light" % Game.client_id)
+	http_request2.request(Game.base_url + "/highscore/list-alltime?client=%s&game=living-light" % Game.client_id)
 
 func _get_dynamic_results_completed(result, response_code, headers, body):
 	dynamic_fetched = true
@@ -52,6 +52,8 @@ func _get_dynamic_results_completed(result, response_code, headers, body):
 	
 	if response == null || response.get("Name") == null || response.Name == "" || response.get("Players") == null || response.Players.size() == 0:
 		return
+	
+	$CanvasLayer/DynamicButton.text = response.Name
 	
 	var entry := HighscoreEntry.instance()
 	entry.get_node("Rank").text = "Rank"
@@ -205,11 +207,19 @@ func _process(delta: float) -> void:
 
 
 func _on_ContinueButton_pressed() -> void:
-	
+	var nickname_changed = Game.nickname != nickname_input.text
 	Game.nickname = nickname_input.text
 	Game.save_highscore()
 	
 	Game.change_to_main()
+	
+	if nickname_changed:
+		var http_request = HTTPRequest.new()
+		add_child(http_request)
+		
+		var error = http_request.request(Game.base_url + "/highscore/set-player-name?client=%s&game=living-light&player=%s" % [Game.client_id, Game.nickname.percent_encode()])
+		if error != OK:
+			print("SetPlayerName error")
 
 
 func _check_nickname():
@@ -220,8 +230,7 @@ func _check_nickname():
 			col = Game.max_nickname_size
 		nickname_input.cursor_set_column(col)
 	
-	var test = nickname_input.text.strip_edges()
-	if test.length() < Game.min_nickname_size || test.length() > Game.max_nickname_size:
+	if !Game.check_nickname(nickname_input.text):
 		$CanvasLayer/ContinueButton.disabled = true
 	else:
 		$CanvasLayer/ContinueButton.disabled = false
