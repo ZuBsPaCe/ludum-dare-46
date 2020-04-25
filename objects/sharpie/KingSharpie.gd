@@ -73,6 +73,7 @@ func _process(delta: float) -> void:
 	spikes1.rotation_degrees = fmod(time * 180.0, 360.0)
 	spikes2.rotation_degrees = fmod(time * 180.0 + 45.0, 360.0)
 
+var dbg := 0.0
 
 func _physics_process(delta: float) -> void:
 	if Game.player_dead || Game.player_won:
@@ -97,11 +98,16 @@ func _physics_process(delta: float) -> void:
 	if travel <= 0:
 		restart()
 	
-	var factor = Game.get_speed_factor(position)
+	var factor = Game.get_king_sharpie_factor(position)
 	
-	var volume1 = -80.0 + factor * 160.0
-	if volume1 > default_audio1_volume:
-		volume1 = default_audio1_volume
+	var volume1 = -80.0 + factor * (default_audio1_volume + 80.0)
 	audio1.volume_db = volume1
+	
+	dbg += delta
+	if dbg > 1.0:
+		dbg = 0.0
+		print("Factor %s    Volume %s    Distance %s" % [factor, volume1, (position - Game.player.position).length()])
+	
+	
 
 

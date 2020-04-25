@@ -406,7 +406,7 @@ func change_scene(scene_name : String) -> void:
 		start_transition()
 
 func change_to_game() -> void:
-	current_level = 1
+	current_level = 11
 	current_level_name = "Level1"
 	fame = 0
 	fame_timer = 0
@@ -526,6 +526,23 @@ func get_speed_factor(position : Vector2) -> float:
 		return 1.0
 	
 	return (max_move_distance - player_dist) / (max_move_distance - min_move_distance)
+
+func get_king_sharpie_factor(position : Vector2) -> float:
+	var max_hear_distance = 1000.0
+	var min_hear_distance = 300.0
+	
+	var player_dist = (Game.player_position - position).length()
+	
+	if player_dist >= max_hear_distance:
+		return 0.0
+	
+	if player_dist <= min_hear_distance:
+		return 1.0
+	
+	# https://godotengine.org/qa/32016/how-have-damage-scale-high-low-level-and-then-low-later-levels?show=32019#a32019
+	#return log((max_hear_distance - player_dist) / (max_hear_distance - min_hear_distance) * 9 + 1)
+	return (max_hear_distance - player_dist) / (max_hear_distance - min_hear_distance) 
+	
 
 
 func save_highscore():
