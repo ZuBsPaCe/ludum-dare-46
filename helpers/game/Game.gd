@@ -62,7 +62,7 @@ const min_nickname_size := 3
 const max_nickname_size := 16
 
 const base_url := "https://www.zubspace.com"
-#const base_url := "http://www.zubspace-local.com:8080"
+#const base_url := "https://www.zubspace-local.com:4443"
 
 var orb_init := {
 	"Level1": 3,
@@ -586,7 +586,15 @@ func stop_highscore() -> void:
 		id = highscore_id
 	else:
 		# Please don't cheat. Thank you :)
-		id = highscore_id/2 + (highscore_id % (fame + current_level))
+		
+		# Modulo does not work correctly for HTML5 builds.... Doing it manually...
+		#id = floor(highscore_id/2) + (highscore_id % (fame + current_level))
+		
+		var addition = fame + current_level
+		var division = int(highscore_id / addition)
+		var modulo = highscore_id - division * addition
+		
+		id = floor(highscore_id/2) + modulo
 	
 	var error = http_request.request(Game.base_url + "/highscore/stop?client=%s&game=living-light&level=%s&player=%s&id=%s&score=%s" % [client_id, current_level, nickname.percent_encode(), id, fame])
 	if error != OK:
