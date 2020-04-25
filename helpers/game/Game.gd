@@ -406,7 +406,7 @@ func change_scene(scene_name : String) -> void:
 		start_transition()
 
 func change_to_game() -> void:
-	current_level = 11
+	current_level = 1
 	current_level_name = "Level1"
 	fame = 0
 	fame_timer = 0
