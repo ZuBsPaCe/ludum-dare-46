@@ -52,14 +52,14 @@ __meta__ = {
 [node name="ScoreLabel" type="Label" parent="CanvasLayer"]
 anchor_left = 0.5
 anchor_right = 0.5
-margin_left = -214.086
-margin_top = 43.1299
-margin_right = 216.914
-margin_bottom = 123.13
+margin_left = -409.5
+margin_top = 43.0
+margin_right = 409.5
+margin_bottom = 123.0
 rect_pivot_offset = Vector2( 255.136, 90 )
 theme = ExtResource( 3 )
 custom_colors/font_color = Color( 0.964706, 0.839216, 0.741176, 1 )
-text = "Score"
+text = "Score XXX  Level XX"
 align = 1
 __meta__ = {
 "_edit_use_anchors_": false

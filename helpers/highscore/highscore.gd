@@ -15,16 +15,23 @@ var alltime_has_values := false
 var alltime_has_fame := false
 
 
+var player_entries := []
+
+
 func _ready() -> void:
 	
-	$CanvasLayer/ScoreLabel.text = "Score: %s" % Game.fame
+	$CanvasLayer/ScoreLabel.text = "Score: %s  Level: %s" % [Game.fame, Game.current_level]
 	$"CanvasLayer/New Personal Highscore".visible = Game.personal_highscore_broken
 	$"CanvasLayer/New Online Highscore".visible = false
 	$"CanvasLayer/DynamicButton".visible = false
 	$"CanvasLayer/AlltimeButton".visible = false
 	$CanvasLayer/ScrollContainerDynamic.visible = false
 	$CanvasLayer/ScrollContainerAlltime.visible = false
+	
+	$CanvasLayer/NicknameLabel.visible = false
+	$CanvasLayer/Nickname.visible = false
 	$CanvasLayer/Nickname.text = Game.nickname
+	
 	
 	_check_nickname()
 	
@@ -77,6 +84,9 @@ func _get_dynamic_results_completed(result, response_code, headers, body):
 		entry.get_node("Level").text = str(response.Levels[i])
 		entry.get_node("Score").text = str(response.Scores[i])
 		
+#		if response.Rookies[i] == 1:
+#			entry.get_node("Name").modulate = Color(1, 1, 1, 0.75)
+		
 		container.add_child(entry)
 		
 		if do_scroll_dynamic == 0 && response.Players[i] == Game.nickname && response.Scores[i] == Game.fame && response.Levels[i] == Game.current_level:
@@ -85,6 +95,8 @@ func _get_dynamic_results_completed(result, response_code, headers, body):
 			entry.get_node("Name").modulate = Color.green
 			entry.get_node("Level").modulate = Color.green
 			entry.get_node("Score").modulate = Color.green
+			
+			player_entries.append(entry)
 			
 			if Game.fame > 0:
 				$"CanvasLayer/New Online Highscore".visible = true
@@ -132,6 +144,9 @@ func _get_alltime_results_completed(result, response_code, headers, body):
 		entry.get_node("Level").text = str(response.Levels[i])
 		entry.get_node("Score").text = str(response.Scores[i])
 		
+#		if response.Rookies[i] == 1:
+#			entry.get_node("Name").modulate = Color(1, 1, 1, 0.75)
+		
 		container.add_child(entry)
 		
 		if do_scroll_alltime == 0 && response.Players[i] == Game.nickname && response.Scores[i] == Game.fame && response.Levels[i] == Game.current_level:
@@ -140,6 +155,8 @@ func _get_alltime_results_completed(result, response_code, headers, body):
 			entry.get_node("Name").modulate = Color.green
 			entry.get_node("Level").modulate = Color.green
 			entry.get_node("Score").modulate = Color.green
+			
+			player_entries.append(entry)
 			
 			if Game.fame > 0:
 				$"CanvasLayer/New Online Highscore".visible = true
@@ -158,6 +175,9 @@ func _try_show_scores():
 	
 	$CanvasLayer/AlltimeButton.visible = alltime_has_values
 	$CanvasLayer/DynamicButton.visible = dynamic_has_values
+	
+	$CanvasLayer/NicknameLabel.visible = true
+	$CanvasLayer/Nickname.visible = true
 	
 	if alltime_has_fame:
 		_show_alltime()
@@ -237,6 +257,9 @@ func _check_nickname():
 
 func _on_Nickname_text_changed() -> void:
 	_check_nickname()
+	
+	for entry in player_entries:
+		entry.get_node("Name").text = nickname_input.text
 	
 
 func _on_Nickname_gui_input(event: InputEvent) -> void:

@@ -42,7 +42,7 @@ var player_won := false
 var personal_highscore := 0
 var personal_highscore_broken := false
 var highscore_id := 0
-var nickname := "Player"
+var nickname := ""
 var client_id := 0
 
 var wait_for_start_level_button := false
@@ -73,8 +73,8 @@ var orb_init := {
 	"Level6": 5,
 	"Level7": 5,
 	"Level8": 5,
-	"Level9": 6,
-	"Level10": 6
+	"Level9": 5,
+	"Level10": 5
 }
 
 var sharpie_init := {
@@ -96,12 +96,12 @@ var cthulhu_init := {
 	"Level2": 1,
 	"Level3": 1,
 	"Level4": 1,
-	"Level5": 2,
+	"Level5": 1,
 	"Level6": 2,
 	"Level7": 2,
 	"Level8": 2,
-	"Level9": 3,
-	"Level10": 3
+	"Level9": 2,
+	"Level10": 2
 }
 
 
@@ -119,7 +119,6 @@ func _ready() -> void:
 	$GUI/Intro3.visible = false
 	$GUI/Intro3a.visible = false
 	$GUI/Intro3b.visible = false
-	
 	
 func _input(event):
 	if animation_player.is_playing() && animation_player.current_animation == "Intro" && event.is_pressed():
@@ -178,9 +177,9 @@ func _process(delta: float) -> void:
 			elif current_level == 21:
 				button.text = "Are you serious?"
 			elif current_level == 31:
-				button.text = "Cheater..."
-			elif current_level == 41:
 				button.text = "Please stop!"
+			elif current_level == 41:
+				button.text = "Cheater..."
 			elif current_level == 51:
 				button.text = "Ok. You've won! :)"
 			elif current_level > level_count:
@@ -266,7 +265,12 @@ func start_game() -> void:
 	
 	var first := true
 	
-	var more = current_level / level_count
+	var object_counts := get_desired_object_count(current_level)
+	
+	var orb_desired_count = object_counts[0]
+	var sharpie_desired_count = object_counts[1]
+	var cthulhu_desired_count = object_counts[2]
+	var king_sharpie_desired_count = object_counts[3]
 	
 	for spawn in spawns:
 		var instance : Node2D = null
@@ -278,10 +282,10 @@ func start_game() -> void:
 			start_level_button.set_global_position(player_position)
 			start_level_button.visible = true
 			first = false
-		elif orb_count < orb_init[current_level_name] + more:
+		elif orb_count < orb_desired_count:
 			instance = OrbScene.instance()
 			orb_count += 1
-		elif cthulhu_count < cthulhu_init[current_level_name] + more && (spawn.position - player.position).length() > 250:
+		elif cthulhu_count < cthulhu_desired_count && (spawn.position - player.position).length() > 250:
 			instance = CthulhuScene.instance()
 			var cthulhu := instance as Cthulhu
 			var dir := spawn.direction as Vector2
@@ -289,7 +293,7 @@ func start_game() -> void:
 				dir = Vector2.UP.rotated(deg2rad(rand_range(0, 360)))
 			cthulhu.init(player, dir)
 			cthulhu_count += 1
-		elif sharpie_count < sharpie_init[current_level_name] + more:
+		elif sharpie_count < sharpie_desired_count:
 			instance = SharpieScene.instance()
 			var sharpie := instance as Sharpie
 			var dir := spawn.direction as Vector2
@@ -304,15 +308,43 @@ func start_game() -> void:
 			instance.position = spawn.position
 			get_tree().current_scene.add_child(instance)
 	
-	var king_sharpie_counter = current_level
-	while king_sharpie_counter > 10:
+	for i in range(0, king_sharpie_desired_count):
 		var king_sharpie = KingSharpieScene.instance()
 		king_sharpie.init()
 		get_tree().current_scene.add_child(king_sharpie)
-		king_sharpie_counter -= 10
 	
 	player_light_radius = 128.0 * player.scale.x
 	player_light_factor = 1.0
+
+func get_desired_object_count(level: int) -> Array:
+	var level_name = level
+	while level_name >= 11:
+		level_name -= 10
+	
+	var level_name_str := "Level" + str(level_name)
+	
+	var orb_desired_count = orb_init[level_name_str]
+	var sharpie_desired_count = sharpie_init[level_name_str]
+	var cthulhu_desired_count = cthulhu_init[level_name_str]
+	
+	var helper := level
+	var more_orbs := 0
+	var more_monsters := 0
+	
+	while helper >= 11:
+		more_orbs += 1
+		more_monsters += 1
+		helper -= 10
+	
+	orb_desired_count += more_orbs
+	sharpie_desired_count += more_monsters
+	cthulhu_desired_count += more_monsters
+	
+	var king_sharpie_desired_count := 0
+	if level >= 11:
+		king_sharpie_desired_count = 1
+	
+	return [orb_desired_count, sharpie_desired_count, cthulhu_desired_count, king_sharpie_desired_count]
 
 func won_level() -> void:
 	player_won = true
@@ -532,7 +564,24 @@ func load_highscore():
 	else:
 		client_id = randi()
 		
-		nickname = "Player " + str(randi() % (10000-100) + 100)
+		var primary := [
+			"Funny", "Crazy", "Power", "Storm", "Love", "Rock", "Fast", "Hot", 
+			"Master", "Lord", "Cool", "Star", "Fierce", "Future", "Disco",
+			"Dancing", "Big", "Monster", "Zombie", "Magic", "Soggy", "Mac",
+			"Mister", "Miss", "Old", "Tiger", "Yoda", "Hairy", "Rambo", "Peanut",
+			"Jelly", "Sergeant", "Sir", "Scary", "Speedy", "Nacho", "Nerdy",
+			"Slow", "Super", "Lucky", "Professor", "Burning", "Taco"]
+			
+		var secondary := [
+			"Fish", "Dog", "Frog", "Ranger", "Snowman", "Trooper", "Duck", 
+			"Angel", "Brain", "Badger", "Bear", "Snake", "Clown", "Fox",
+			"Carrot", "Alien", "Robot", "Wizard", "Flower", "Cake", "Bacon",
+			"Burger", "Captain", "Twinkie", "Cupcake", "Pizza", "Bird",
+			"Banana", "Apple", "Gnome", "Ninja"]
+		
+		while !check_nickname(nickname):
+			nickname = primary[randi() % primary.size()] + " " + secondary[randi() % secondary.size()]
+		
 		save_highscore()
 
 
