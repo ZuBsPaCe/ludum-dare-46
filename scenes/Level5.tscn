@@ -17,7 +17,7 @@ position = Vector2( 80.6102, 267.286 )
 position = Vector2( 229.103, 350.725 )
 
 [node name="Spawn4" parent="Spawns" instance=ExtResource( 2 )]
-position = Vector2( 117.38, 541.644 )
+position = Vector2( 117.38, 547.644 )
 
 [node name="Spawn5" parent="Spawns" instance=ExtResource( 2 )]
 position = Vector2( 244.659, 636.396 )
@@ -68,9 +68,6 @@ position = Vector2( 1081.87, 333.755 )
 position = Vector2( 1207.74, 108.895 )
 
 [node name="Spawn21" parent="Spawns" instance=ExtResource( 2 )]
-position = Vector2( 987.121, 80.6102 )
-
-[node name="Spawn22" parent="Spawns" instance=ExtResource( 2 )]
 position = Vector2( 987.121, 80.6102 )
 
 [node name="Ground" type="TileMap" parent="."]

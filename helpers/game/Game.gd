@@ -471,6 +471,9 @@ func _get_spawns(parent : Node, spawns : Array) -> void:
 			_get_spawns(node, spawns)
 
 func pickup_orb(orb : Orb) -> void:
+	if player_dead:
+		return
+	
 	orb.call_deferred("free")
 	orb_count -= 1
 	
@@ -487,11 +490,17 @@ func pickup_orb(orb : Orb) -> void:
 		won_level()
 
 func check_player_collision(collision : KinematicCollision2D) -> void:
+	if player_dead:
+		return
+		
 	if collision != null && collision.collider is Player:
 		player_dead = true
 		change_to_highscore()
 
 func check_enemy_collision(collision : KinematicCollision2D) -> bool:
+	if player_dead:
+		return false
+		
 	if collision != null:
 		if collision.collider is Cthulhu:
 			player_dead = true
